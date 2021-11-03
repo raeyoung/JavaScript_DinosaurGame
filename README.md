@@ -1,1 +1,1 @@
-miffy-game.netlify.app
+https://miffy-game.netlify.app/
