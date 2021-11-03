@@ -1,6 +1,11 @@
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 
+var message = document.createElement('div');
+message.innerText = 'Game Over!! 너무 못한당 후헿헿';
+message.id = 'gameOver';
+
+
 canvas.width = window.innerWidth - 100;
 canvas.height = window.innerHeight - 100;
 
@@ -101,15 +106,23 @@ function isCollision(dino, cacuts) {
 
     // 충돌했으면 캔버스 클리어
     if(xDifference < 0 && yDifference < 0) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height); 
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        //ctx.canvas.width = ctx.canvas.width;
+        //ctx.beginPath();
         cancelAnimationFrame(animation);
+
+        document.body.appendChild(message);
     }
 }
 
 // 스페이스바를 누를 때마다 공룡 점프
 var jump = false;
 document.addEventListener('keydown', function(e) {
-    if(e.code === 'Space') {
+    if(e.code === 'Space' ) {
         jump = true;
     }
+})
+document.addEventListener("touchstart", function(e) {
+    jump = true;
+
 })
