@@ -1,51 +1,60 @@
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
-
-var message = document.createElement('div');
-message.innerText = 'Game Over!! 너무 못한당 후헿헿';
-message.id = 'gameOver';
-
+var gameAgainBtn = document.getElementById('gameAgainBtn');
 
 canvas.width = window.innerWidth - 100;
-canvas.height = window.innerHeight - 100;
+canvas.height = window.innerHeight - 500;
 
 var miffy = new Image();
 miffy.src = "miffy.png";
 
-// 공룡 등장 좌표
-var dino = {
-    x: 10,
+// 미피 등장 좌표
+var Miffy = {
+    x: 50,
     y: 200,
-    width: 55,
-    height: 95,
+    width: 70,
+    height: 110,
     draw() {
-        //ctx.fillStyle = 'skyblue';
-        //ctx.fillRect(this.x, this.y, this.width, this.height);
         ctx.drawImage(miffy, this.x, this.y, this.width, this.height);
     }
 }
 
-var flower = new Image();
-flower.src = "flower.png";
+var bomb = new Image();
+bomb.src = "bomb.png";
 
 
 // 장애물
 class Cacuts {
     constructor() {
-        this.x = 500;
+        this.x = 900;
         this.y = 270;
-        this.width = 30;
-        this.height = 30;
+        this.width = 40;
+        this.height = 40;
     }
     draw() {
-        //ctx.fillStyle = 'red';
-        //ctx.fillRect(this.x, this.y, this.width, this.height);
-        ctx.drawImage(flower, this.x, this.y, this.width, this.height);
+        ctx.drawImage(bomb, this.x, this.y, this.width, this.height);
+    }
+}
+
+var cloud = new Image();
+cloud.src = "cloud.png";
+
+// 구름
+class Clouds {
+    constructor() {
+        this.x = 700;
+        this.y = 150;
+        this.width = 80;
+        this.height = 80;
+    }
+    draw() {
+        ctx.drawImage(cloud, this.x, this.y, this.width, this.height);
     }
 }
 
 var timer = 0;
 var cacutsArray = [];
+var cloudsArray = [];
 var jumpTimer = 0;
 var animation;
 
@@ -54,14 +63,16 @@ function MoveDino() {
     // 애니메이션 : 1초에 60번 정도 x++ 하면 움직이는 것처럼 보이는 함수
     animation = requestAnimationFrame(MoveDino);
     timer++;
-
+    
     // 캔버스 새로 그리기
     ctx.clearRect(0, 0, canvas.width, canvas.height); 
-
+    
     // 해당 프레임마다 실행
     if(timer % 200 == 0) {
         var cacuts = new Cacuts();
+        var clouds = new Clouds();
         cacutsArray.push(cacuts);
+        cloudsArray.push(clouds);
     }
 
     // 장애물이 반복적으로 그려짐
@@ -70,22 +81,32 @@ function MoveDino() {
         if(c.x < 0) {
             o.slice(i, 1);
         }
-        c.x--;
+        c.x-= 1;
 
         // 충돌여부 체크는 공룡과 모든 장애물과의 x, y좌표를 체크해야함 
-        isCollision(dino, c);
+        isCollision(Miffy, c);
+
+        c.draw();
+    });
+
+    cloudsArray.forEach((c, i, o) => {
+        // x좌표가 0미만인 경우 장애물 제거 (필요없는 장애물 제거)
+        if(c.x < 0) {
+            o.slice(i, 1);
+        }
+        c.x-= 1;
 
         c.draw();
     });
 
     if(jump == true) {
-        dino.y-= 4;
+        Miffy.y-= 4;
         jumpTimer++;
     }
     if(jump == false) {
         // 땅 높이 고정 
-        if(dino.y < 200) {
-            dino.y+= 4;    
+        if(Miffy.y < 200) {
+            Miffy.y+= 4;    
         }
         
     }
@@ -95,25 +116,33 @@ function MoveDino() {
         jumpTimer = 0;
     }
     
-    dino.draw();
+    Miffy.draw();
 }
 MoveDino();
 
 // 장애물과의 충돌 확인
-function isCollision(dino, cacuts) {
-    var xDifference = cacuts.x - (dino.x + dino.width); 
-    var yDifference = cacuts.y - (dino.y + dino.height); 
+function isCollision(Miffy, cacuts) {
+    var xDifference = cacuts.x - (Miffy.x + Miffy.width); 
+    var yDifference = cacuts.y - (Miffy.y + Miffy.height); 
 
     // 충돌했으면 캔버스 클리어
     if(xDifference < 0 && yDifference < 0) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        //ctx.canvas.width = ctx.canvas.width;
-        //ctx.beginPath();
+
+        console.log("cacuts.x" + cacuts.x);
+        console.log("cacuts.y" + cacuts.y);
+
         cancelAnimationFrame(animation);
 
-        document.body.appendChild(message);
+        // clearRect 버그로 대체
+        //canvas.style.display = 'none';
+        gameOverWarpper.style.display = 'block';
     }
 }
+
+gameAgainBtn.addEventListener('click', function() {
+    location.reload();
+})
 
 // 스페이스바를 누를 때마다 공룡 점프
 var jump = false;
@@ -121,8 +150,10 @@ document.addEventListener('keydown', function(e) {
     if(e.code === 'Space' ) {
         jump = true;
     }
-})
-document.addEventListener("touchstart", function(e) {
+});
+
+// 모바일 전용
+document.addEventListener("touchstart", function() {
     jump = true;
 
-})
+});

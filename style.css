@@ -1,14 +1,66 @@
-#gameOver {
+#title {
+    display: flex;
+    justify-content: center;
+    margin: 1em;
+    font-size: 30px;
+}
+
+#canvasWarpper {
+    position: relative;
+    display: flex;
+    border-radius: 25px;
+    border: 2px solid black;
+    width: 100%;
+    height: 500px;
+}
+
+#gameOverWarpper {
+    display: none;
+}
+
+#gameOverMsg {
+    position: absolute;
+    top: 4em;
+    left: 70%;
+    align-content: center;
+    display: flex;
+    color: black;
+    font-size: 50px;
+    -webkit-transform: rotate(30deg); /* 글씨 회전 */
+    
+    
+}
+
+#gameAgainBtn {
     display: flex;
     position: absolute;
-    top: 33%;
-    left: 20%;
-    width: 250px;
-    height: 40px;
+    top: 10em;
+    left: 40%;
+    width: 10em;
+    height: 2em;
     justify-content: center;
     align-items: center;
     border-radius: 25px;
-    padding: 2px;
-    background-color: pink;
-    color: white;
+    border: 2px solid black;
+    background-color: #ffc80b;
+    color: black;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+/* mobile */
+@media screen and (max-width: 768px) {
+    #canvasWarpper {
+        height: 300px;
+    }
+    #gameOverMsg {
+        top: 4em;
+        left: 6em;
+        font-size: 35px;
+    }
+    #gameAgainBtn {
+        top: 7em;
+        left: 2.9em;
+        width: 8em;
+    }
 }
