@@ -6,7 +6,7 @@ canvas.width = window.innerWidth - 100;
 canvas.height = window.innerHeight - 500;
 
 var miffy = new Image();
-miffy.src = "miffy.png";
+miffy.src = "image/miffy.png";
 
 // 미피 등장 좌표
 var Miffy = {
@@ -20,7 +20,7 @@ var Miffy = {
 }
 
 var bomb = new Image();
-bomb.src = "bomb.png";
+bomb.src = "image/bomb.png";
 
 
 // 장애물
@@ -37,7 +37,7 @@ class Cacuts {
 }
 
 var cloud = new Image();
-cloud.src = "cloud.png";
+cloud.src = "image/cloud.png";
 
 // 구름
 class Clouds {
@@ -66,6 +66,8 @@ function MoveDino() {
     
     // 캔버스 새로 그리기
     ctx.clearRect(0, 0, canvas.width, canvas.height); 
+
+
     
     // 해당 프레임마다 실행
     if(timer % 200 == 0) {
@@ -79,13 +81,17 @@ function MoveDino() {
     cacutsArray.forEach((c, i, o) => {
         // x좌표가 0미만인 경우 장애물 제거 (필요없는 장애물 제거)
         if(c.x < 0) {
-            o.slice(i, 1);
+            cacutsArray = o.slice((o.length-1)*-1);
         }
-        c.x-= 1;
+        c.x-= 2;
 
         // 충돌여부 체크는 공룡과 모든 장애물과의 x, y좌표를 체크해야함 
         isCollision(Miffy, c);
 
+        if(window.innerWidth < 1000) {
+            c.y = 150; 
+        }
+        
         c.draw();
     });
 
@@ -96,24 +102,35 @@ function MoveDino() {
         }
         c.x-= 1;
 
+        if(window.innerWidth < 1000) {
+            c.y = 50; 
+        }
+
         c.draw();
     });
 
     if(jump == true) {
-        Miffy.y-= 4;
+        Miffy.y-= 5;
         jumpTimer++;
     }
     if(jump == false) {
         // 땅 높이 고정 
         if(Miffy.y < 200) {
-            Miffy.y+= 4;    
+            Miffy.y += 4;    
         }
         
     }
     // 해당 프레임이 지나면 점프 중단
-    if(jumpTimer > 30) {
+    if(jumpTimer > 40) {
         jump = false;
         jumpTimer = 0;
+    }
+
+    if(window.innerWidth < 1000) {
+        Miffy.x = 20;
+        Miffy.y = 100;
+        Miffy.width = 50;
+        Miffy.height = 90;
     }
     
     Miffy.draw();
@@ -128,10 +145,6 @@ function isCollision(Miffy, cacuts) {
     // 충돌했으면 캔버스 클리어
     if(xDifference < 0 && yDifference < 0) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        console.log("cacuts.x" + cacuts.x);
-        console.log("cacuts.y" + cacuts.y);
-
         cancelAnimationFrame(animation);
 
         // clearRect 버그로 대체
